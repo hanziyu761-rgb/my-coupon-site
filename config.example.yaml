@@ -43,6 +43,19 @@ voice:
   enabled: false             # 没有 GPU 就保持 false，跳过配音
   ref_audio: "04-voice-clone/my_voice.wav"   # 你的参考录音 3-10秒
 
+# ── 步骤 4.5 数字人渲染 ───────────────────────────────────
+# 三选一后端，从简到难：
+#   mock   - 无数字人脸，直接用字幕动画（0成本，测试用）
+#   heygem - 开源自托管（Docker + GPU，部署一次永久用）
+#   guiji  - 硅基智能云端 API（RMB 充值，约0.3元/分钟，无需 GPU）
+digital_human:
+  backend: mock              # mock | heygem | guiji
+  # HeyGem 自托管时填：
+  heygem_url: "http://localhost:8080"
+  # 硅基智能云端时填（也可放环境变量 GUIJI_API_KEY / GUIJI_AVATAR_ID）：
+  api_key: ""
+  avatar_id: ""              # 在硅基智能控制台选好的形象 ID
+
 # ── 第5步 对口型（需 GPU + 真人底片）────────────────────────
 lipsync:
   enabled: false             # 纯文字动画视频不需要；有真人口播底片才开

@@ -131,6 +131,49 @@ def step4_voice(cfg, script: Path) -> Path | None:
     return voice_out
 
 
+def step45_digital_human(cfg, audio: Path | None, subtitle_video: Path | None) -> Path | None:
+    """
+    步骤 4.5：数字人渲染（在字幕动画之后调用，或直接产出数字人视频）
+    backend=mock 时直接复制字幕动画，无需 GPU。
+    """
+    dh_cfg = cfg.get("digital_human", {})
+    backend = dh_cfg.get("backend", "mock")
+    if backend == "disabled":
+        return subtitle_video
+
+    log("4.5", f"数字人渲染（backend={backend}）")
+    OUT.mkdir(exist_ok=True)
+    dh_out = OUT / "digital_human.mp4"
+
+    cmd = [
+        sys.executable, "04-digital-human/digital_human.py",
+        "--backend", backend,
+        "--out", str(dh_out),
+    ]
+    if audio and audio.exists():
+        cmd += ["--audio", str(audio)]
+    if subtitle_video and subtitle_video.exists():
+        cmd += ["--subtitle-video", str(subtitle_video)]
+        if backend != "mock":
+            cmd.append("--merge")
+
+    avatar = ROOT / cfg.get("digital_human", {}).get("avatar", "")
+    if avatar.exists():
+        cmd += ["--avatar", str(avatar)]
+
+    # 注入 API key 环境变量
+    if dh_cfg.get("api_key"):
+        os.environ.setdefault("GUIJI_API_KEY", dh_cfg["api_key"])
+    if dh_cfg.get("avatar_id"):
+        os.environ.setdefault("GUIJI_AVATAR_ID", dh_cfg["avatar_id"])
+    if dh_cfg.get("heygem_url"):
+        os.environ.setdefault("HEYGEM_URL", dh_cfg["heygem_url"])
+
+    run(cmd)
+    print(f"→ {dh_out}")
+    return dh_out
+
+
 def step5_render(cfg, script: Path, audio: Path | None) -> Path:
     log(5, "字幕动画渲染（Remotion）+ 可选对口型（LatentSync）")
     OUT.mkdir(exist_ok=True)
@@ -194,6 +237,7 @@ def guess_title(script: Path) -> str:
 
 # ── 主流程 ───────────────────────────────────────────────────
 STEPS = [None, "download", "transcribe", "rewrite", "voice", "render", "distribute"]
+# 注：4.5（数字人）自动跟在 5（渲染）之后运行，不单独计步
 
 
 def main():
@@ -238,7 +282,9 @@ def main():
         if audio is None:
             a = OUT / "voice.wav"
             audio = a if a.exists() else None
-        final_video = step5_render(cfg, script, audio)
+        subtitle_video = step5_render(cfg, script, audio)
+        # 步骤 4.5 紧接在渲染后：数字人合成
+        final_video = step45_digital_human(cfg, audio, subtitle_video) or subtitle_video
     if start <= 6 <= end:
         if final_video is None:
             final_video = OUT / "video.mp4"
