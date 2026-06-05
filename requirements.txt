@@ -1,6 +1,7 @@
 # 智能体 Python 依赖（非 GPU 部分）
 pyyaml
-anthropic           # 纠错 / 仿写 / 字幕排版（需 ANTHROPIC_API_KEY）
+openai              # 调用国产大模型（DeepSeek/Qwen/GLM/Kimi/豆包，OpenAI兼容接口）
+# anthropic         # 仅当用 Claude 时需要（需美元卡）
 yt-dlp              # 第1步 YouTube/B站下载
 f2                  # 第1步 抖音下载
 # 第2步 转写（按需装其一）

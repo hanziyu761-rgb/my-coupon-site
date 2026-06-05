@@ -17,6 +17,9 @@ import subprocess
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from llm import chat, has_llm
+
 SCHEMA_PROMPT = """你是短视频字幕排版助手。把下面这段口播文案切分成适合竖屏短视频的字幕条，并输出严格的 JSON。
 
 要求：
@@ -58,25 +61,10 @@ def get_audio_duration(audio_path: Path) -> float | None:
         return None
 
 
-def build_with_claude(script: str) -> dict:
-    try:
-        import anthropic
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "anthropic", "-q"])
-        import anthropic
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError("请设置 ANTHROPIC_API_KEY")
-
-    client = anthropic.Anthropic(api_key=api_key)
-    print("[Claude] 生成字幕时间轴...")
-    msg = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=4096,
-        messages=[{"role": "user", "content": SCHEMA_PROMPT.replace("{script}", script)}],
-    )
-    text = msg.content[0].text.strip()
+def build_with_llm(script: str) -> dict:
+    print("[大模型] 生成字幕时间轴...")
+    text = chat(SCHEMA_PROMPT.replace("{script}", script),
+                max_tokens=4096, temperature=0.3).strip()
     # 容错：剥掉可能的代码块
     text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text).strip()
     return json.loads(text)
@@ -124,13 +112,13 @@ def main():
 
     script = Path(args.input).read_text(encoding="utf-8")
 
-    if args.no_llm or not os.environ.get("ANTHROPIC_API_KEY"):
+    if args.no_llm or not has_llm():
         props = fallback_parse(script)
     else:
         try:
-            props = build_with_claude(script)
+            props = build_with_llm(script)
         except Exception as e:
-            print(f"[Claude 失败，转本地兜底] {e}")
+            print(f"[大模型失败，转本地兜底] {e}")
             props = fallback_parse(script)
 
     # 修正 pills 颜色（防止 Claude 没给颜色）

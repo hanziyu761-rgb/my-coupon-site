@@ -52,6 +52,27 @@ def newest(pattern, base=TRANSCRIPTS):
     return files[-1] if files else None
 
 
+def apply_llm_env(cfg):
+    """把 config 里的 llm 设置注入环境变量，供各步的 llm.py 读取"""
+    llm = cfg.get("llm", {})
+    provider = llm.get("provider", "deepseek")
+    os.environ["LLM_PROVIDER"] = provider
+    if llm.get("model"):
+        os.environ["LLM_MODEL"] = llm["model"]
+    # 若 config 里直接写了 key，按服务商映射到对应环境变量
+    key_envs = {
+        "deepseek": "DEEPSEEK_API_KEY", "qwen": "DASHSCOPE_API_KEY",
+        "glm": "ZHIPU_API_KEY", "moonshot": "MOONSHOT_API_KEY",
+        "doubao": "ARK_API_KEY", "anthropic": "ANTHROPIC_API_KEY",
+    }
+    env_name = key_envs.get(provider)
+    if llm.get("api_key") and env_name and not os.environ.get(env_name):
+        os.environ[env_name] = llm["api_key"]
+    if env_name and not os.environ.get(env_name):
+        print(f"⚠️  未配置 {provider} 的 API key（{env_name}）。"
+              f"第2/3步及字幕排版将退回本地兜底或失败。")
+
+
 # ── 各步 ─────────────────────────────────────────────────────
 def step1_download(cfg) -> Path:
     log(1, "下载对标视频")
@@ -189,6 +210,7 @@ def main():
     if not cfg_path.exists():
         sys.exit(f"配置不存在：{cfg_path}\n请先: cp config.example.yaml config.yaml")
     cfg = load_config(cfg_path)
+    apply_llm_env(cfg)
     if args.url:
         cfg["download"]["url"] = args.url
 

@@ -23,7 +23,9 @@ downloads/  transcripts/  out/   过程文件与成品
 ```bash
 pip install -r requirements.txt
 cp config.example.yaml config.yaml   # 改成你的配置（下载源、各步开关）
-export ANTHROPIC_API_KEY=sk-ant-xxx  # 纠错/仿写/字幕排版
+
+# 大模型：国产模型可人民币充值，默认 DeepSeek（最便宜，中文强）
+export DEEPSEEK_API_KEY=sk-xxx        # 注册 https://platform.deepseek.com
 
 python agent.py                       # 跑全流程
 python agent.py --url "<视频URL>"     # 临时指定下载源
@@ -55,12 +57,26 @@ cd 03-remotion && npm install
 pip install playwright && playwright install chromium
 ```
 
-### 环境变量
+### 大模型服务商（人民币充值）
+
+纠错/仿写/字幕排版都走统一的 `llm.py`，换服务商只改 `LLM_PROVIDER` 和对应 key：
+
+| 服务商 | LLM_PROVIDER | Key 环境变量 | 注册（支付宝/微信充值） |
+|--------|-------------|-------------|----------------------|
+| **DeepSeek** ⭐ | `deepseek` | `DEEPSEEK_API_KEY` | platform.deepseek.com |
+| 通义千问 Qwen | `qwen` | `DASHSCOPE_API_KEY` | bailian.console.aliyun.com |
+| 智谱 GLM | `glm` | `ZHIPU_API_KEY` | open.bigmodel.cn |
+| Kimi | `moonshot` | `MOONSHOT_API_KEY` | platform.moonshot.cn |
+| 豆包 | `doubao` | `ARK_API_KEY` | console.volcengine.com/ark |
 
 ```bash
-export ANTHROPIC_API_KEY=sk-ant-xxxx   # Claude 纠错/仿写
-export OPENAI_API_KEY=sk-xxxx          # 可选，用 Whisper API 转写
+export LLM_PROVIDER=deepseek
+export DEEPSEEK_API_KEY=sk-xxx
+python llm.py            # 自检：打印当前服务商并试跑一句
 ```
+
+> 也可在 `config.yaml` 的 `llm:` 段里直接填 provider 和 api_key。
+> 转写如需 Whisper API 另设 `OPENAI_API_KEY`（可选）。
 
 ## 分步使用
 

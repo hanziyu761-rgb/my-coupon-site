@@ -7,8 +7,11 @@
 """
 
 import argparse
-import os
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from llm import chat
 
 REWRITE_PROMPT = """你是我的短视频仿写助手。我的身份背景：
 - 我是河北高阳（全国家纺纺织重镇）的创业者，专门给本地纺织厂、布商、电商分销商做"AI落地"的工具和服务（不是自己开家纺店，是卖工具/服务给商家）。
@@ -34,30 +37,11 @@ REWRITE_PROMPT = """你是我的短视频仿写助手。我的身份背景：
 
 
 def rewrite(text: str, duration: int) -> str:
-    try:
-        import anthropic
-    except ImportError:
-        import subprocess, sys
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "anthropic", "-q"])
-        import anthropic
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError("请设置 ANTHROPIC_API_KEY 环境变量")
-
     # 中文口播约 4.5 字/秒
     chars = int(duration * 4.5)
     prompt = REWRITE_PROMPT.format(text=text, duration=duration, chars=chars)
-
-    client = anthropic.Anthropic(api_key=api_key)
-    print(f"[Claude] 仿写中（目标 {duration}s / {chars}字）...")
-
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=4096,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return message.content[0].text
+    print(f"[仿写中] 目标 {duration}s / {chars}字 ...")
+    return chat(prompt, max_tokens=4096, temperature=0.8)
 
 
 def main():

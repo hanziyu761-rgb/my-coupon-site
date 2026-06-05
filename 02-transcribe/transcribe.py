@@ -19,6 +19,9 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).parent
 OUTPUT_DIR = SCRIPT_DIR.parent / "transcripts"
 
+sys.path.insert(0, str(SCRIPT_DIR.parent))
+from llm import chat
+
 
 # ─── 依赖检测 ────────────────────────────────────────────────────────────────
 
@@ -144,26 +147,10 @@ FIX_PROMPT = """你是一个专业文案校对助手。下面是一段语音转�
 {text}"""
 
 
-def fix_with_claude(text: str) -> str:
-    """用 Claude API 纠错（需要 ANTHROPIC_API_KEY）"""
-    try:
-        import anthropic
-    except ImportError:
-        install("anthropic")
-        import anthropic
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        raise EnvironmentError("请设置 ANTHROPIC_API_KEY 环境变量")
-
-    client = anthropic.Anthropic(api_key=api_key)
-    print("[Claude] 纠错中...")
-    message = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=4096,
-        messages=[{"role": "user", "content": FIX_PROMPT.format(text=text)}],
-    )
-    return message.content[0].text
+def fix_with_llm(text: str) -> str:
+    """用大模型纠错（服务商由 LLM_PROVIDER 决定，默认 DeepSeek）"""
+    print("[纠错中] ...")
+    return chat(FIX_PROMPT.format(text=text), max_tokens=4096, temperature=0.3)
 
 
 # ─── 主流程 ──────────────────────────────────────────────────────────────────
@@ -195,7 +182,7 @@ def process_one(video_path: Path, engine: str, fix: bool) -> Path:
     print(f"[转写完成] {out_txt}")
 
     if fix:
-        fixed = fix_with_claude(text)
+        fixed = fix_with_llm(text)
         out_fixed.write_text(fixed, encoding="utf-8")
         print(f"[纠错完成] {out_fixed}")
         return out_fixed
