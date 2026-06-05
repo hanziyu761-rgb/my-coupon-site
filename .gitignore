@@ -11,6 +11,7 @@ downloads/
 transcripts/
 05-render-remotion/out/
 05-render-remotion/props.json
+05-render-remotion/props*.json
 05-render-remotion/public/
 config.yaml
 
