@@ -1,0 +1,21 @@
+{
+  "name": "digital-human-video",
+  "version": "1.0.0",
+  "description": "短视频字幕动画模板 —— 暗色卡片风格",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "remotion render src/Root/index.tsx VideoComposition out/video.mp4",
+    "render:preview": "remotion render src/Root/index.tsx VideoComposition out/preview.mp4 --scale=0.5"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "remotion": {
+    "entryPoint": "src/Root/index.tsx"
+  }
+}
