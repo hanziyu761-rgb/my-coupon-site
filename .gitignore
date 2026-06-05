@@ -9,10 +9,18 @@ venv/
 out/
 downloads/
 transcripts/
-03-remotion/out/
+05-render-remotion/out/
+05-render-remotion/props.json
+05-render-remotion/public/
+config.yaml
+
+# GPU 模型权重 / 克隆的第三方仓库
+04-voice-clone/checkpoints/
+04-voice-clone/index-tts/
+05-render-remotion/LatentSync/
 
 # 平台 cookie（含登录凭证，切勿提交）
-04-distribute/cookies/
+06-distribute/cookies/
 
 # 系统
 .DS_Store

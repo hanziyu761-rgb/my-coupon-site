@@ -25,4 +25,6 @@ export interface VideoConfig {
   segments: Segment[];
   /** 背景颜色，默认深色网格 */
   bgColor?: string;
+  /** 可选：配音音轨（来自第4步声音克隆），相对 public/ 的路径或 URL */
+  audioSrc?: string;
 }

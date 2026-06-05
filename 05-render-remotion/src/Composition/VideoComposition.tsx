@@ -1,7 +1,9 @@
 import React from "react";
 import {
   AbsoluteFill,
+  Audio,
   Sequence,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -74,6 +76,7 @@ export const VideoComposition: React.FC<VideoConfig> = ({
   pills,
   segments,
   bgColor,
+  audioSrc,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -88,6 +91,9 @@ export const VideoComposition: React.FC<VideoConfig> = ({
 
   return (
     <AbsoluteFill>
+      {audioSrc && (
+        <Audio src={audioSrc.startsWith("http") ? audioSrc : staticFile(audioSrc)} />
+      )}
       <DarkGridBg color={bgColor} />
       <TagLine text={tagLine} />
 

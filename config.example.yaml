@@ -1,0 +1,43 @@
+# 数字人短视频智能体 —— 配置文件
+# 复制为 config.yaml 后修改。agent.py 会读取它。
+
+# ── 你的身份（用于第3步仿写）────────────────────────────────
+identity:
+  who: "河北高阳家纺纺织重镇的创业者，给本地纺织厂/布商/电商分销商做 AI 落地工具和服务"
+  products: "纺织爆款内容助手、纱知道（纱线助手）等 SaaS"
+  audience: "不太懂技术、但想用 AI 多赚钱/省人力的中小纺织商家和老板"
+  tone: "接地气、说人话、不端着，像同行老板饭桌上掏心窝子讲干货"
+  tagline: "AI落地 · 高阳纺织专属"
+
+# ── 第1步 下载 ─────────────────────────────────────────────
+download:
+  platform: youtube          # youtube | douyin | bilibili
+  url: ""                    # 单条视频 URL（youtube/bilibili）
+  user: ""                   # 账号主页 URL（douyin）
+  limit: 10
+
+# ── 第2步 转写 ─────────────────────────────────────────────
+transcribe:
+  engine: auto               # auto | funasr | faster-whisper | openai
+  fix: true                  # 用 Claude 纠错
+
+# ── 第3步 仿写 ─────────────────────────────────────────────
+rewrite:
+  duration: 60               # 目标口播秒数
+
+# ── 第4步 声音克隆（需 GPU）─────────────────────────────────
+voice:
+  enabled: false             # 没有 GPU 就保持 false，跳过配音
+  ref_audio: "04-voice-clone/my_voice.wav"   # 你的参考录音 3-10秒
+
+# ── 第5步 对口型（需 GPU + 真人底片）────────────────────────
+lipsync:
+  enabled: false             # 纯文字动画视频不需要；有真人口播底片才开
+  face_video: ""             # 真人口播底片视频
+
+# ── 第6步 分发 ─────────────────────────────────────────────
+distribute:
+  enabled: false             # 配好 cookie 后再开
+  platforms: ["douyin"]      # douyin | weixin | bilibili | xiaohongshu | kuaishou
+  title: ""                  # 留空则自动用仿写标题
+  tags: ["AI落地", "高阳纺织", "数字人"]

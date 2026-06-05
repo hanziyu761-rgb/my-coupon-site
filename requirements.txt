@@ -1,0 +1,15 @@
+# 智能体 Python 依赖（非 GPU 部分）
+pyyaml
+anthropic           # 纠错 / 仿写 / 字幕排版（需 ANTHROPIC_API_KEY）
+yt-dlp              # 第1步 YouTube/B站下载
+f2                  # 第1步 抖音下载
+# 第2步 转写（按需装其一）
+faster-whisper      # 无 GPU 兜底（CPU）
+# funasr modelscope # 有 GPU 推荐，中文最佳
+openai              # 可选：Whisper API 转写
+# 第6步 分发
+playwright          # social-auto-upload 依赖；装后需 playwright install chromium
+
+# GPU 部分（在 GPU 实例上单独装，见各目录脚本）：
+#   04-voice-clone: index-tts（IndexTTS2）+ torch(cuda)
+#   05-render-remotion/latentsync.py: LatentSync + torch(cuda)
