@@ -96,6 +96,18 @@ def run_single_job(job: dict, dry_run: bool = False, from_step: int = 1) -> str:
         )
         if voice_out.exists():
             audio_for_render = voice_out
+    elif from_step <= 4 and voice_cfg.get("tts", "") in ("offline", "edge", "auto"):
+        # 无声音克隆参考时，用兜底 TTS（edge在线 / espeak离线）出音轨
+        mode = voice_cfg.get("tts", "auto")
+        cmd = [sys.executable, "04-voice-clone/tts_offline.py",
+               "--text-file", str(script_path), "--out", str(voice_out)]
+        if voice_cfg.get("voice"):
+            cmd += ["--voice", voice_cfg["voice"]]
+        if mode == "offline":
+            cmd.append("--offline")
+        _run_step("兜底语音合成", cmd)
+        if voice_out.exists():
+            audio_for_render = voice_out
     else:
         # 找已有 voice.wav
         existing = out_dir / "voice.wav"

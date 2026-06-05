@@ -43,8 +43,11 @@ DEFAULT_TEMPLATE = {
         "heygem_url": "http://localhost:8080",
     },
     "voice": {
-        "enabled": False,
+        "enabled": False,         # True=用 IndexTTS2 克隆 ref_audio（需GPU）
         "ref_audio": "",          # 指向 voice_ref.wav 的路径
+        # 无克隆时的兜底语音：auto(先试edge再espeak) | edge | offline(纯espeak) | ""(无声)
+        "tts": "auto",
+        "voice": "zh-CN-XiaoxiaoNeural",  # edge-tts音色，男声可用 zh-CN-YunxiNeural
     },
     "distribute": {
         "enabled": False,

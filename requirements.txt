@@ -4,6 +4,9 @@ openai              # 调用国产大模型（DeepSeek/Qwen/GLM/Kimi/豆包，Op
 # anthropic         # 仅当用 Claude 时需要（需美元卡）
 yt-dlp              # 第1步 YouTube/B站下载
 f2                  # 第1步 抖音下载
+# 兜底语音合成（无 GPU/无 API 也能出音轨）
+edge-tts            # 在线，最自然（部分环境被墙时自动退回 espeak）
+# 离线兜底需系统装 espeak-ng： sudo apt-get install -y espeak-ng
 # 第2步 转写（按需装其一）
 faster-whisper      # 无 GPU 兜底（CPU）
 # funasr modelscope # 有 GPU 推荐，中文最佳
