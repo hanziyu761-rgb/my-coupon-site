@@ -73,9 +73,13 @@ python 02-transcribe/rewrite.py --input transcripts/video_fixed.txt --duration 6
 
 ```bash
 cd 03-remotion
-npm run start   # 浏览器预览
-npm run render  # 输出 out/video.mp4
+npm install
+npm run start   # 浏览器预览（Remotion Studio）
+npm run render  # 输出 out/video.mp4（自动探测系统 Chromium）
 ```
+
+> `npm run render` 会调用 `render.sh`，自动找系统已装的 Chromium 并用 `--chrome-mode=chrome-for-testing`，
+> 这样无需联网下载 chrome-headless-shell。已在 4核/无GPU 环境实测渲染成功（63秒视频约2分钟出片）。
 
 **修改文案的最小操作：** 只改 `sampleScript.ts` 里每个 segment 的 `text` 字段，`from` 和 `durationInFrames` 控制出现时间。
 

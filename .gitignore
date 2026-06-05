@@ -1,0 +1,19 @@
+# 依赖
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 产物 / 中间文件
+out/
+downloads/
+transcripts/
+03-remotion/out/
+
+# 平台 cookie（含登录凭证，切勿提交）
+04-distribute/cookies/
+
+# 系统
+.DS_Store
+*.log

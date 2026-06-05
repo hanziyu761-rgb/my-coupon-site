@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "短视频字幕动画模板 —— 暗色卡片风格",
   "scripts": {
-    "start": "remotion studio",
-    "render": "remotion render src/Root/index.tsx VideoComposition out/video.mp4",
-    "render:preview": "remotion render src/Root/index.tsx VideoComposition out/preview.mp4 --scale=0.5"
+    "start": "remotion studio src/index.ts",
+    "render": "bash render.sh",
+    "render:direct": "remotion render src/index.ts VideoComposition out/video.mp4",
+    "render:preview": "remotion render src/index.ts VideoComposition out/preview.mp4 --scale=0.5"
   },
   "dependencies": {
     "@remotion/cli": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "remotion": "^4.0.0"
   },
   "devDependencies": {
