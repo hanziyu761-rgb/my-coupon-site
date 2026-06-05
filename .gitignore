@@ -22,6 +22,12 @@ config.yaml
 # 平台 cookie（含登录凭证，切勿提交）
 06-distribute/cookies/
 
+# 多租户客户数据（含 API key / 声音录音 / 成品 / 队列库，切勿提交）
+commercial/tenants/
+commercial/jobs.db
+04-digital-human/out/
+digital_human.mp4
+
 # 系统
 .DS_Store
 *.log
